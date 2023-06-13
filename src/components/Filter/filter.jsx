@@ -1,27 +1,22 @@
-import css from './filter.module.css';
+import { WrapperFiler, FilterInput, FilterP } from './Filter.styled';
+import { useDispatch, useSelector } from 'react-redux';
+import { filtration } from 'Redux/contacts/filterSlice';
+import { SearchOutlined } from '@ant-design/icons';
 
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-// import { filterContacts } from 'components/redux/actions/actions';
-import { filterContacts } from '../../redux/slice/filterSplice';
-
-export function Filter() {
+export const Filter = () => {
   const dispatch = useDispatch();
-  const filter = useSelector(state => state.filter);
+  const filter = useSelector(state => state.filter); 
 
-  const filterChange = e => {
-    dispatch(filterContacts(e.currentTarget.value));
-  };
   return (
-    <label className={css.label}>
-      Find contact by name
-      <input
-        className={css.input}
+    <WrapperFiler>
+      <FilterP>Find contacts by name</FilterP>
+
+      <FilterInput
+        prefix={<SearchOutlined />} 
         type="text"
-        name="filter"
         value={filter}
-        onChange={filterChange}
+        onChange={e => dispatch(filtration(e.target.value))} 
       />
-    </label>
+    </WrapperFiler>
   );
-}
+};

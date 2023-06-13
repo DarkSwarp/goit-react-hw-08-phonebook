@@ -1,44 +1,67 @@
-import ContactForm from './ContcatForm/contactform';
-import { ContactList } from './ContactList/contactlist';
-import { Filter } from './Filter/filter';
-import { useEffect } from 'react';
+import { GlobalStyle } from './GlobalStyle';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import { Layout } from './Layout/Layout';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, lazy } from 'react';
+import { refreshUser } from 'Redux/auth/operations'; 
+import { PrivateRoute } from './PrivateRoute'; 
+import { RestrictedRoute } from './RestrictedRoute'; 
+import { ToastContainer } from 'react-toastify'; 
+import { Spiner } from 'pages/ContactList/ContactList.styled';
 
-import { useSelector } from 'react-redux';
-import { getFilter } from 'redux/slice/filterSplice';
-import { getContacts, getIsLoading, getError } from 'redux/slice/contactsSlice';
-import { useDispatch } from 'react-redux';
-import { fetchContacts } from 'redux/operation';
+const Register = lazy(() => import('../pages/Register/Register'));
+const Home = lazy(() => import('../pages/Home/Home'));
+const Login = lazy(() => import('../pages/Login/Login'));
+const Contactlist = lazy(() => import('../pages/ContactList/ContactList'));
 
-export function App() {
+export const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchContacts());
+    dispatch(refreshUser()); 
   }, [dispatch]);
 
-  const filter = useSelector(getFilter);
-  const contacts = useSelector(getContacts);
-  const isLoading = useSelector(getIsLoading);
-  const error = useSelector(getError);
+  const { isRefreshing } = useSelector(state => state.auth);
 
-  const getVisibleContacts = () => {
-    const normalizedFilter = filter.toLowerCase().trim();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  };
-  return (
-    <div>
-      <h1>Phonebook</h1>
-      <ContactForm />
-      <h2>Contacts</h2>
-      {isLoading && !error && <b>Request in progress...</b>}
-      {contacts.length > 1 && <Filter />}
-      {contacts.length > 0 ? (
-        <ContactList contacts={getVisibleContacts()} />
-      ) : (
-        <p>Your phonebook is empty. Please add contact.</p>
-      )}
-    </div>
+  return !isRefreshing ? (
+    <>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+
+          <Route
+            path="/contacts"
+            element={
+              <PrivateRoute component={<Contactlist />} redirectTo="/login" />
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <RestrictedRoute redirectTo="/contacts" component={<Login />} />
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <RestrictedRoute
+                redirectTo="/contacts"
+                component={<Register />}
+              />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Route>
+      </Routes>
+
+ 
+      <ToastContainer />
+
+
+      <GlobalStyle />
+    </>
+  ) : (
+    <Spiner />
   );
-}
+};
+
