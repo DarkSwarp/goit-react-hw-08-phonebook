@@ -10,7 +10,7 @@ import {
 } from './Login.styled';
 
 
-import { logIn } from 'redux/auth/operations';
+import { logIn } from 'Redux/auth/operations';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 

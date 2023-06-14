@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contacts/operations';
+import { addContact } from 'Redux/contacts/operations';
 import { useState } from 'react';
 import {
   FormWrap,
