@@ -20,10 +20,10 @@ import {
   deleteContact,
   redactContatc,
   fetchContacts,
-} from 'Redux/contacts/operations'; 
+} from 'redux/contacts/operations'; 
 
 import { useEffect, useState } from 'react';
-import { Filter } from 'components/Filter/Filter';
+import { Filter } from '../../components/Filter/filter';
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { Button, Popconfirm } from 'antd'; 
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'; 
